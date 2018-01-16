@@ -1,6 +1,5 @@
 from socket import *
-
-
+import GPhotoWrapper
 
 class Response:
   def __init__(this,code,message=None):
@@ -47,20 +46,33 @@ while True:
       f = open(filename, "rb")
       outputdata = f.read()
       f.close()
-    
-    connectionSocket.send(b'HTTP/1.1 200 OK\r\n')
-    connectionSocket.send(b'Content-Type: image/jpg; charset=utf-8\r\n')
-    connectionSocket.send(b'\r\n')
 
-    
-    #for i in range(0,len(outputdata)):
-    #  connectionSocket.send(outputdata[i:i+1])
+      connectionSocket.send(b'HTTP/1.1 200 OK\r\n')
+      connectionSocket.send(b'Content-Type: image/jpg; charset=utf-8\r\n')
+      connectionSocket.send(b'\r\n')
 
-    connectionSocket.send(outputdata)
+      connectionSocket.send(outputdata)
+      
+      connectionSocket.send(b'\r\n\r\n')
+      print('sent response correctly')
+      connectionSocket.close()
+        
+    if path == '/capture':
+      outputdata = GPhotoWrapper.captureImageAndDownload('current')
+      
+      connectionSocket.send(b'HTTP/1.1 200 OK\r\n')
+      connectionSocket.send(b'Content-Type: text/html; charset=utf-8\r\n')
+      connectionSocket.send(b'\r\n')
+
+      connectionSocket.send(b'output:')
+      connectionSocket.send(outputdata)
+      connectionSocket.send(b'DONE')
+      
+      connectionSocket.send(b'\r\n\r\n')
+      print('sent response correctly')
+      connectionSocket.close()
     
-    connectionSocket.send(b'\r\n\r\n')
-    print('sent response correctly')
-    connectionSocket.close()
+
   except IOError:
     connectionSocket.send(b'HTTP/1.1 404 Not Found\r\n')
     connectionSocket.send(b'Content-Type: text/html; charset=utf-8\r\n')
