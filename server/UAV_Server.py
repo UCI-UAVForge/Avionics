@@ -1,6 +1,5 @@
 from socket import *
-
-
+import GPhotoWrapper
 
 class Response:
   def __init__(this,code,message=None):
@@ -24,14 +23,19 @@ while True:
     print(message.decode())
   
     argString = message.split()[1].decode()
-    params = []
+    params = {}
     path = ''
 
     print("args %s"%argString)
 
     if '?' in argString:
       path = argString.split('?')[0]
-      params = argString.split('?')[1].split('&')
+      parts = argString.split('?')[1].split('&')
+      for part in parts:
+        key = part.split('=')[0]
+        value = part.split('=')[1]
+        params[key] = value
+        print('%s = %s'%(key,value))
     else:
       path = argString
       params = []
@@ -42,25 +46,41 @@ while True:
     outputdata = b'nope'
 
     if path == '/getImage':
-      filename = params[0]
+      filename = params.get('fname','current')
+      
       print("getting response for: " + str(filename))
-      f = open(filename, "rb")
+      f = open(filename+'.jpg', "rb")
       outputdata = f.read()
       f.close()
-    
-    connectionSocket.send(b'HTTP/1.1 200 OK\r\n')
-    connectionSocket.send(b'Content-Type: image/jpg; charset=utf-8\r\n')
-    connectionSocket.send(b'\r\n')
 
-    
-    #for i in range(0,len(outputdata)):
-    #  connectionSocket.send(outputdata[i:i+1])
+      connectionSocket.send(b'HTTP/1.1 200 OK\r\n')
+      connectionSocket.send(b'Content-Type: image/jpg; charset=utf-8\r\n')
+      connectionSocket.send(b'\r\n')
 
-    connectionSocket.send(outputdata)
-    
-    connectionSocket.send(b'\r\n\r\n')
-    print('sent response correctly')
-    connectionSocket.close()
+      connectionSocket.send(outputdata)
+      
+      connectionSocket.send(b'\r\n\r\n')
+      print('sent response correctly')
+      connectionSocket.close()
+        
+    if path == '/capture':
+      filename = params.get('fname','current')
+        
+      print("getting response for: " + str(filename))
+      outputdata = GPhotoWrapper.captureImageAndDownload(filename)
+      
+      connectionSocket.send(b'HTTP/1.1 200 OK\r\n')
+      connectionSocket.send(b'Content-Type: text/html; charset=utf-8\r\n')
+      connectionSocket.send(b'\r\n')
+
+      connectionSocket.send(b'output:')
+      connectionSocket.send(outputdata)
+      connectionSocket.send(b'DONE')
+      
+      connectionSocket.send(b'\r\n\r\n')
+      print('sent response correctly')
+      connectionSocket.close()
+
   except IOError:
     connectionSocket.send(b'HTTP/1.1 404 Not Found\r\n')
     connectionSocket.send(b'Content-Type: text/html; charset=utf-8\r\n')
@@ -68,6 +88,14 @@ while True:
     connectionSocket.send(b'404 Not Found\r\n')
     connectionSocket.send(b'\r\n\r\n')
     print('A 404 error occured')
+    connectionSocket.close()
+  except KeyError:
+    connectionSocket.send(b'HTTP/1.1 400 Bad Request\r\n')
+    connectionSocket.send(b'Content-Type: text/html; charset=utf-8\r\n')
+    connectionSocket.send(b'\r\n')
+    connectionSocket.send(b'400 Bad Request\r\n')
+    connectionSocket.send(b'\r\n\r\n')
+    print('A 400 error occured')
     connectionSocket.close()
   except IndexError:
     connectionSocket.send(b'HTTP/1.1 500 Internal Server Error\r\n')
