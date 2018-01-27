@@ -23,7 +23,7 @@ clientSocket.connect((serverHost, serverPort))
 
 #send requests
 #take photo
-clientSocket.send(b'POST /capture?'+filename.encode('utf-8')+b' HTTP/1.1\r\n')
+clientSocket.send(b'POST /capture HTTP/1.1\r\n')
 clientSocket.send(b'Host: '+serverHost.encode('utf-8')+b':'+bytes(serverPort)+b'\r\n')
 clientSocket.send(b'\r\n\r\n')
 
@@ -31,7 +31,7 @@ clientSocket.send(b'\r\n\r\n')
 getResponse()
 
 #download photo
-clientSocket.send(b'GET /getImage?'+filename.encode('utf-8')+b' HTTP/1.1\r\n')
+clientSocket.send(b'GET /getImage HTTP/1.1\r\n')
 clientSocket.send(b'Host: '+serverHost.encode('utf-8')+b':'+bytes(serverPort)+b'\r\n')
 clientSocket.send(b'\r\n\r\n')
 

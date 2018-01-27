@@ -38,7 +38,6 @@ while True:
         print('%s = %s'%(key,value))
     else:
       path = argString
-      params = []
 
     print("path: %s"%path)
     print("params %s"%params)
