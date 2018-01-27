@@ -14,7 +14,11 @@ def getResponse():
 #parse params
 serverHost = sys.argv[1]
 serverPort = int(sys.argv[2])
-filename = sys.argv[3]
+
+if len(sys.argv) > 3:
+  filename = sys.argv[3]
+else:
+  filename = 'current'
 
 #setup socket
 start = time.time()
@@ -23,15 +27,15 @@ clientSocket.connect((serverHost, serverPort))
 
 #send requests
 #take photo
-clientSocket.send(b'POST /capture HTTP/1.1\r\n')
-clientSocket.send(b'Host: '+serverHost.encode('utf-8')+b':'+bytes(serverPort)+b'\r\n')
-clientSocket.send(b'\r\n\r\n')
+#clientSocket.send(b'POST /capture?fname='+filename.encode('utf-8')+b' HTTP/1.1\r\n')
+#clientSocket.send(b'Host: '+serverHost.encode('utf-8')+b':'+bytes(serverPort)+b'\r\n')
+#clientSocket.send(b'\r\n\r\n')
 
 #get response
-getResponse()
+#getResponse()
 
 #download photo
-clientSocket.send(b'GET /getImage HTTP/1.1\r\n')
+clientSocket.send(b'GET /getImage?fname='+filename.encode('utf-8')+b' HTTP/1.1\r\n')
 clientSocket.send(b'Host: '+serverHost.encode('utf-8')+b':'+bytes(serverPort)+b'\r\n')
 clientSocket.send(b'\r\n\r\n')
 
