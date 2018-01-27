@@ -10,7 +10,7 @@ class Response:
       this.message = 'No message given.'
 
 serverSocket = socket(AF_INET, SOCK_STREAM)
-serverSocket.bind(('localhost', 6789))
+serverSocket.bind(('', 6789))
 
 serverSocket.listen(1)
 
@@ -58,6 +58,7 @@ while True:
 
       connectionSocket.send(outputdata)
       
+      connectionSocket.send(b'\r\n\r\n')
       connectionSocket.send(b'\r\n\r\n')
       print('sent response correctly')
       connectionSocket.close()
