@@ -1,5 +1,4 @@
 import os, subprocess, signal
-from time import sleep
 
 def captureImageAndDownload(fname):
   p = subprocess.Popen(['sudo', 'gphoto2', '--capture-image-and-download', '--filename='+fname+'.jpg', '--force-overwrite'], stdout=subprocess.PIPE)
@@ -8,6 +7,8 @@ def captureImageAndDownload(fname):
   return out
 
 def test():
+  from time import sleep
+  
   captureImageAndDownload('000')
   sleep(1)
   captureImageAndDownload('001')

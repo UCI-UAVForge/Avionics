@@ -1,56 +1,24 @@
-from socket import *
+import Request
 import sys
-import time
 
-def getResponse():
-  buffer = b''
-  while True:
-    recv = clientSocket.recv(4096*1024*128)
-    buffer += recv
-    if not recv:
-      break
-  return buffer
+def main():
+  #parse params
+  serverHost = sys.argv[1]
+  serverPort = int(sys.argv[2])
+  path = sys.argv[3]
 
-#parse params
-serverHost = sys.argv[1]
-serverPort = int(sys.argv[2])
+  if (path=='/getImage'):
+    r = Request.Request(serverHost, serverPort, 'GET', path)
+    image = Request.sendRequest(r)
+    #write imagefile
+    f = open('output.jpg',r'wb')
+    f.write(image)
+    f.close()
+  else:
+    r = Request.Request(serverHost, serverPort, 'POST', path)
+    outputText = Request.sendRequest(r)
+    print(outputText)
 
-if len(sys.argv) > 3:
-  filename = sys.argv[3]
-else:
-  filename = 'current'
+if __name__=="__main__":
+  main()
 
-#setup socket
-start = time.time()
-clientSocket = socket(AF_INET, SOCK_STREAM)
-clientSocket.connect((serverHost, serverPort))
-
-#send requests
-#take photo
-#clientSocket.send(b'POST /capture?fname='+filename.encode('utf-8')+b' HTTP/1.1\r\n')
-#clientSocket.send(b'Host: '+serverHost.encode('utf-8')+b':'+bytes(serverPort)+b'\r\n')
-#clientSocket.send(b'\r\n\r\n')
-
-#get response
-#getResponse()
-
-#download photo
-clientSocket.send(b'GET /getImage?fname='+filename.encode('utf-8')+b' HTTP/1.1\r\n')
-clientSocket.send(b'Host: '+serverHost.encode('utf-8')+b':'+bytes(serverPort)+b'\r\n')
-clientSocket.send(b'\r\n\r\n')
-
-#collect response
-
-text = ''
-
-buffer = getResponse()
-
-finish = time.time()
-
-print('download took %f seconds' % (finish-start))
-
-f = open('output.jpg',r'bw')
-f.write(bytes(buffer.split(b'\r\n\r\n')[1]))
-f.close()
-
-clientSocket.close()
