@@ -1,6 +1,5 @@
 from socket import *
 import sys
-import time
 
 class Request:
   def __init__(this, host, port, requestType='GET', path='', args={}):
@@ -10,10 +9,10 @@ class Request:
     this.path = path
     this.args = args
     
-def getResponse(clientSocket):
+def getResponse(clientSocket, bufsize=4096*1024):
   buffer = b''
   while True:
-    recv = clientSocket.recv(4096*1024)
+    recv = clientSocket.recv(bufsize)
     buffer += recv
     if not recv:
       break
@@ -25,21 +24,21 @@ def makeQueryString(args):
     argStrings.append(key+'='+args[key])
   return '&'.join(argStrings)
 
-def sendRequest(request):
+def sendRequest(request, bufsize=1024*4096):
   host = request.host
   port = request.port
   request_type = request.requestType
   path = request.path
   args = request.args
-  
-  if request_type is not 'GET' and request_type is not 'POST':
-    request_type='GET'
 
-  responseData = ''
-  start = time.time()
-  clientSocket = socket(AF_INET, SOCK_STREAM)
-  clientSocket.connect((host, port))
   try:
+    if request_type is not 'GET' and request_type is not 'POST':
+      request_type='GET'
+
+    responseData = ''
+    clientSocket = socket(AF_INET, SOCK_STREAM)
+    clientSocket.connect((host, port))
+
     clientSocket.send(request_type.encode('utf-8') + b' ' + path.encode('utf-8'))
     if len(args) > 0:
       clientSocket.send(b'?'+makeQueryString(args).encode('utf-8'))
@@ -49,12 +48,12 @@ def sendRequest(request):
     clientSocket.send(b'\r\n\r\n')
 
     text = ''
-    buffer = getResponse(clientSocket)
-    finish = time.time()
-    print('download took %f seconds' % (finish-start))
+    buffer = getResponse(clientSocket,bufsize)
     
     responseData = buffer.split(b'\r\n\r\n')[1]
     clientSocket.close()
+  except ConnectionRefusedError:
+    print ('Connection refused by server %s:%s!'%(host,port))
   except IOError:
     print ('An IO error occured!')
   finally:
