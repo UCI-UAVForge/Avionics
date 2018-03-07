@@ -20,7 +20,6 @@ class Response:
     msg.append(this.data)
     msg.append('')
     msg.append('')
-    msg.append('')
     return '\r\n'.join(msg)
 
   def __bytes__(this):
@@ -32,7 +31,6 @@ class Response:
       msg.append(this.data.encode('utf-8'))
     else:
       msg.append(this.data)
-    msg.append(b'')
     msg.append(b'')
     msg.append(b'')
     return b'\r\n'.join(msg)
