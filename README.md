@@ -16,6 +16,6 @@ Example Files:
 
 ## client
 Contains the python code for the GS's image transfer client. Should be run from the /client directory
-using ```python3 UAV_Client.py <server_hostname> <server_port_number> getImage?<image_name>```
-(example: ```python3 UAV_Client.py localhost 6789 getImage?phantom5.jpg```). Any files downloaded will
+using ```python3 UAV_Client.py <server_hostname> <server_port_number> /getImage```
+(example: ```python3 UAV_Client.py localhost 6789 /getImage```). Any files downloaded will
 be stored in the /client directory.
