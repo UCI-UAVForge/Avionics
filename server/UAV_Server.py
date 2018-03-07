@@ -68,20 +68,18 @@ def main():
 
       else:
         r = Response('404', '404 Not Found')
-        
+      connectionSocket.send(bytes(r))
     except IOError:
       r = Response('404', '404 Not Found')
-      
+      connectionSocket.send(bytes(r))
     except KeyError:
       r = Response('400', '400 Bad Request')
-      
+      connectionSocket.send(bytes(r))
     except IndexError:
       r = Response('500', '500 Internal Server Error')
-      
-    finally:
       connectionSocket.send(bytes(r))
-      
-      #connectionSocket.close()
+    finally:
+      connectionSocket.close()
   serverSocket.close()
 
 if __name__=='__main__':
