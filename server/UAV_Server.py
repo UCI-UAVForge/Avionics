@@ -81,7 +81,7 @@ def main():
     finally:
       connectionSocket.send(bytes(r))
       
-      connectionSocket.close()
+      #connectionSocket.close()
   serverSocket.close()
 
 if __name__=='__main__':

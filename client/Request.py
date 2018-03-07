@@ -54,7 +54,8 @@ def sendRequest(request, bufsize=1024*4096):
     clientSocket.close()
   except ConnectionRefusedError:
     print ('Connection refused by server %s:%s!'%(host,port))
-  except IOError:
+  except IOError as ioerror:
+    print ("IO error: {0}".format(ioerror))
     print ('An IO error occured!')
   finally:
     clientSocket.close()
