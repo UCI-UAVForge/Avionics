@@ -5,6 +5,7 @@ from Response import Response
 def main():
   try:
     serverSocket = socket(AF_INET, SOCK_STREAM)
+    serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     serverSocket.bind(('', 6789))
   except OSError:
     print('Unable to open the socket. Terminate any processes using port 6789 and try again later.')
@@ -20,7 +21,7 @@ def main():
     r = Response()
     
     try:
-      message = connectionSocket.recv(2048)
+      message = connectionSocket.recv(4096)
 
       print(message.decode())
     
@@ -68,7 +69,9 @@ def main():
 
       else:
         r = Response('404', '404 Not Found')
-      connectionSocket.send(bytes(r))
+      print("%d bytes to send" % len(bytes(r)))
+      sent_bytes = connectionSocket.send(bytes(r))
+      print("%d bytes sent" % sent_bytes)
     except IOError:
       r = Response('404', '404 Not Found')
       connectionSocket.send(bytes(r))
@@ -79,6 +82,7 @@ def main():
       r = Response('500', '500 Internal Server Error')
       connectionSocket.send(bytes(r))
     finally:
+      connectionSocket.shutdown(SHUT_RDWR)
       connectionSocket.close()
   serverSocket.close()
 
