@@ -9,7 +9,7 @@ class Request:
     this.path = path
     this.args = args
     
-def getResponse(clientSocket, bufsize=4096*1024):
+def getResponse(clientSocket, bufsize=1024):
   buffer = b''
   while True:
     recv = clientSocket.recv(bufsize)
@@ -24,7 +24,7 @@ def makeQueryString(args):
     argStrings.append(key+'='+args[key])
   return '&'.join(argStrings)
 
-def sendRequest(request, bufsize=1024*4096):
+def sendRequest(request, bufsize=1024):
   host = request.host
   port = request.port
   request_type = request.requestType

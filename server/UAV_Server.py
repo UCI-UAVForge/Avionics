@@ -21,7 +21,7 @@ def main():
     r = Response()
     
     try:
-      message = connectionSocket.recv(4096)
+      message = connectionSocket.recv(1024)
 
       print(message.decode())
     
