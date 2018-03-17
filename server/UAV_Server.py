@@ -1,4 +1,5 @@
 from socket import *
+import time
 import GPhotoWrapper
 from Response import Response
 
@@ -82,7 +83,8 @@ def main():
       r = Response('500', '500 Internal Server Error')
       connectionSocket.send(bytes(r))
     finally:
-      connectionSocket.shutdown(SHUT_RDWR)
+      connectionSocket.shutdown(2)
+      time.sleep(10)
       connectionSocket.close()
   serverSocket.close()
 
