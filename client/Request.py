@@ -24,7 +24,7 @@ def makeQueryString(args):
     argStrings.append(key+'='+args[key])
   return '&'.join(argStrings)
 
-def sendRequest(request, bufsize=1024):
+def sendRequest(request, bufsize=1024):  
   host = request.host
   port = request.port
   request_type = request.requestType
@@ -52,6 +52,8 @@ def sendRequest(request, bufsize=1024):
     
     responseData = buffer.split(b'\r\n\r\n')[1]
     clientSocket.close()
+  except ConnectionResetError:
+    print ('Connection reset by server %s:%s!'%(host,port))
   except ConnectionRefusedError:
     print ('Connection refused by server %s:%s!'%(host,port))
   except IOError as ioerror:
