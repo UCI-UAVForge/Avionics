@@ -14,7 +14,7 @@ def main():
     r = Request(serverHost, serverPort, 'GET', path)
     print("[INFO] Sending request to %s:%s..." % (serverHost,serverPort))
     start = time.time()
-    image = sendRequest(r,128*1024)
+    image = sendRequest(r,1024*1024)
     end = time.time()
     print("[DEBUG] Got %d bytes"%(len(image)))
     print("[DEBUG] Request received in %f seconds" % (end-start))

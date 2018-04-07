@@ -46,12 +46,11 @@ def sendRequest(request, bufsize=1024):
 
     clientSocket.send(b'Host: '+host.encode('utf-8')+b':'+bytes(port)+b'\r\n')
     clientSocket.send(b'\r\n\r\n')
-
+    clientSocket.shutdown(SHUT_WR)
     text = ''
     buffer = getResponse(clientSocket,bufsize)
     
     responseData = buffer.split(b'\r\n\r\n')[1]
-    clientSocket.close()
   except ConnectionResetError:
     print ('Connection reset by server %s:%s!'%(host,port))
   except ConnectionRefusedError:

@@ -22,8 +22,8 @@ def main():
     r = Response()
     
     try:
-      message = connectionSocket.recv(1024)
-
+      message = connectionSocket.recv(1024*1024)
+      #connectionSocket.shutdown(SHUT_RD)  
       print(message.decode())
     
       argString = message.split()[1].decode()
@@ -73,6 +73,7 @@ def main():
       print("%d bytes to send" % len(bytes(r)))
       sent_bytes = connectionSocket.send(bytes(r))
       print("%d bytes sent" % sent_bytes)
+      connectionSocket.shutdown(SHUT_WR)
     except IOError:
       r = Response('404', '404 Not Found')
       connectionSocket.send(bytes(r))
@@ -83,8 +84,6 @@ def main():
       r = Response('500', '500 Internal Server Error')
       connectionSocket.send(bytes(r))
     finally:
-      connectionSocket.shutdown(2)
-      time.sleep(10)
       connectionSocket.close()
   serverSocket.close()
 
