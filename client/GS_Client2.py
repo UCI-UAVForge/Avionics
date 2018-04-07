@@ -34,7 +34,6 @@ def main():
     outputText = sendRequest(r)
     end = time.time()
     print(outputText)
-    print("[DEBUG] Got %d bytes"%(len(image)))
     print("[DEBUG] Request received in %f seconds" % (end-start))
 
 if __name__=="__main__":
