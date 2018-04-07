@@ -29,9 +29,13 @@ def main():
     finally:
       f.close()
   else:
+    start = time.time()    
     r = Request(serverHost, serverPort, 'POST', path)
     outputText = sendRequest(r)
+    end = time.time()
     print(outputText)
+    print("[DEBUG] Got %d bytes"%(len(image)))
+    print("[DEBUG] Request received in %f seconds" % (end-start))
 
 if __name__=="__main__":
   main()
