@@ -1,5 +1,6 @@
 from socket import *
 import time
+import os
 import GPhotoWrapper
 from Response import Response
 
@@ -15,6 +16,7 @@ def main():
   serverSocket.listen(1)
 
   serverUp = True
+  missionStartTime = time.time();
 
   while serverUp:
     print("Ready to serve...")
@@ -23,7 +25,6 @@ def main():
     
     try:
       message = connectionSocket.recv(1024*1024)
-      #connectionSocket.shutdown(SHUT_RD)  
       print(message.decode())
     
       argString = message.split()[1].decode()
@@ -63,6 +64,62 @@ def main():
         outputdata = GPhotoWrapper.captureImageAndDownload(filename)
         
         r = Response('200', outputdata, 'text/plain')
+
+      elif path == '/captureAndDownload':
+        filename = 'img-%d'%(time.time()-missionStartTime)
+        gphotoMessage = GPhotoWrapper.captureImageAndDownload(filename)
+        f = open(filename+'.jpg', "rb")
+        outputdata = f.read()
+        f.close()
+        os.remove(filename+'.jpg')
+        
+        r = Response('200', outputdata, 'image/jpg')
+      elif path == '/start':
+        clientTime = params.get('client_time',time.time())
+        serverTime = time.time()
+
+        missionStartTime = clientTime;
+
+        format_string = '''
+        <html>
+          <style>
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+                padding: 2px;
+            }
+          </style>
+          <body>
+            <table>
+              <tr>
+                <th> </th>
+                <th>Time String</th>
+                <th>Unix Timestamp</th>
+              </tr>
+              <tr>
+                <td>Client Time</td>
+                <td>%s</td>
+                <td>%s</td>
+              </tr>
+              <tr>
+                <td>Server Time</td>
+                <td>%s</td>
+                <td>%s</td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        '''
+
+        dateFormat = '%Y-%m-%d %H:%M:%S'
+        
+        r = Response('200', format_string %
+                     (time.strftime(dateFormat,time.gmtime(((float)(clientTime)-time.timezone+3600*time.daylight))),
+                      clientTime,
+                      time.strftime(dateFormat,time.gmtime(((float)(serverTime)-time.timezone+3600*time.daylight))),
+                      serverTime
+                      ),
+                     'text/html')
         
       elif path == '/shutdown':
         r = Response('200', 'Server Sutting Down. Goodbye.')
