@@ -143,7 +143,7 @@ def main():
     finally:
       connectionSocket.close()
       #todo: make a better delay mechanism - perhaps a manual ack?
-      time.sleep(0.5)
+      time.sleep(10)
   serverSocket.close()
 
 if __name__=='__main__':
