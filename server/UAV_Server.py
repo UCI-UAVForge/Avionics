@@ -141,9 +141,10 @@ def main():
       r = Response('500', '500 Internal Server Error')
       connectionSocket.send(bytes(r))
     finally:
-      connectionSocket.close()
+      #connectionSocket.close()
       #todo: make a better delay mechanism - perhaps a manual ack?
-      time.sleep(10)
+      connectionSocket.recv(1024)
+      connectionSocket.close()
   serverSocket.close()
 
 if __name__=='__main__':
